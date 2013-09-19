@@ -34,15 +34,15 @@
         that.resize()
         that._initMouseHandling()
 
-        if (document.referrer.match(/hereditary characteristics|operational choices|environmental history/)){
+        if (document.referrer.match(/echolalia|atlas|halfviz/)){
           // if we got here by hitting the back button in one of the demos, 
           // start with the demos section pre-selected
-          that.switchSection('people')
+          that.switchSection('demos')
         }
       },
       resize:function(){
         canvas.width = $(window).width()
-        canvas.height = .45* $(window).height()
+        canvas.height = .75* $(window).height()
         sys.screen({size:{width:canvas.width, height:canvas.height}})
         _vignette = null
         that.redraw()
@@ -58,12 +58,12 @@
           if (node.data.alpha===0) return
           if (node.data.shape=='dot'){
             gfx.oval(pt.x-w/2, pt.y-w/2, w, w, {fill:node.data.color, alpha:node.data.alpha})
-            gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:11})
-            gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:11})
+            gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
+            gfx.text(node.name, pt.x, pt.y+7, {color:"white", align:"center", font:"Arial", size:12})
           }else{
             gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
-            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:11})
-            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:11})
+            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
+            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
           }
         })
         that._drawVignette()
@@ -76,8 +76,8 @@
 
         if (!_vignette){
           var top = ctx.createLinearGradient(0,0,0,r)
-          top.addColorStop(0, "white")
-          top.addColorStop(.5, "rgba(255,255,255,0)")
+          top.addColorStop(0, "#e0e0e0")
+          top.addColorStop(.7, "rgba(255,255,255,0)")
 
           var bot = ctx.createLinearGradient(0,h-r,0,h)
           bot.addColorStop(0, "rgba(255,255,255,0)")
@@ -159,7 +159,7 @@
                  dom.removeClass('linkable')
                  window.status = ''
               }
-            }else if ($.inArray(nearest.node.name, ['interactions','environs','building','people','damage f(x)','constraints']) >=0 ){
+            }else if ($.inArray(nearest.node.name, ['arbor.js','code','docs','demos']) >=0 ){
               if (nearest.node.name!=_section){
                 _section = nearest.node.name
                 that.switchSection(_section)
@@ -316,11 +316,11 @@
           break
           
           case 'introduction':
-          case 'enclosure':
+          case 'reference':
           $(that).trigger({type:'mode', mode:'hidden', dt:dt})
           dom.find('> p').text(_path)
           dom.find('> a').addClass('active').attr('href','#')
-          $('#docs').stop(true).css({opacity:0}).show().delay(3).fadeTo('fast',1)
+          $('#docs').stop(true).css({opacity:0}).show().delay(333).fadeTo('fast',1)
                     
           $('#docs').find(">div").hide()
           $('#docs').find('#'+_path).show()
@@ -336,77 +336,51 @@
   $(document).ready(function(){
     var CLR = {
       branch:"#b2b19d",
-      environs:"#D7191C",
-      building:"#FDAE61",
-      people:"#2C7BB6",
+      code:"orange",
+      doc:"#922E00",
+      demo:"#a7af00"
     }
 
     var theUI = {
-      nodes:{"interactions":{color:"#E4A010", shape:"dot", alpha:1}, 
+      nodes:{"arbor.js":{color:"red", shape:"dot", alpha:1}, 
       
-             people:{color:CLR.branch, shape:"dot", alpha:1}, 
-             "hereditary characteristics":{color:CLR.people, alpha:0,},
-             "operational choices":{color:CLR.people, alpha:0,},
-             "environmental history":{color:CLR.people, alpha:0,},
+             demos:{color:CLR.branch, shape:"dot", alpha:1}, 
+             halfviz:{color:CLR.demo, alpha:0, link:'/halfviz'},
+             atlas:{color:CLR.demo, alpha:0, link:'/atlas'},
+             echolalia:{color:CLR.demo, alpha:0, link:'/echolalia'},
 
-             building:{color:CLR.branch, shape:"dot", alpha:1}, 
-             enclosure:{color:CLR.building, alpha:0},
-             subsystems:{color:CLR.building, alpha:0},
-             "fit & finish":{color:CLR.building, alpha:0,},
+             docs:{color:CLR.branch, shape:"dot", alpha:1}, 
+             reference:{color:CLR.doc, alpha:0, link:'#reference'},
+             introduction:{color:CLR.doc, alpha:0, link:'#introduction'},
 
-             environs:{color:CLR.branch, shape:"dot", alpha:1},
-             personal:{color:CLR.environs, alpha:0,},
-             internal:{color:CLR.environs, alpha:0,},
-             external:{color:CLR.environs, alpha:0,},
-           
-             "damage f(x)":{color:CLR.branch, shape:"dot", alpha:1},
-             "ultraviolet light":{color:CLR.environs, alpha:0,},
-             heat:{color:CLR.environs, alpha:0,},
-             moisture:{color:CLR.environs, alpha:0,},
-
-            constraints:{color:CLR.branch, shape:"dot", alpha:1},
-             economics:{color:CLR.environs, alpha:0,},
-             time:{color:CLR.environs, alpha:0,},
-             space:{color:CLR.environs, alpha:0,},
-
-             },
-
+             code:{color:CLR.branch, shape:"dot", alpha:1},
+             github:{color:CLR.code, alpha:0, link:'https://github.com/samizdatco/arbor'},
+             ".zip":{color:CLR.code, alpha:0, link:'/js/dist/arbor-v0.92.zip'},
+             ".tar.gz":{color:CLR.code, alpha:0, link:'/js/dist/arbor-v0.92.tar.gz'}
+            },
       edges:{
-        "damage f(x)":{
-          "ultraviolet light":{length:3},
-          heat:{length:3},
-          moisture:{length:3}
+        "arbor.js":{
+          demos:{length:.8},
+          docs:{length:.8},
+          code:{length:.8}
         },
-
-        constraints:{
-          economics:{length:3},
-          time:{length:3},
-          space:{length:3}
+        demos:{halfviz:{},
+               atlas:{},
+               echolalia:{}
         },
-
-        "interactions":{
-          people:{length:5},
-          building:{length:5},
-          environs:{length:5}
+        docs:{reference:{},
+              introduction:{}
         },
-        people:{"hereditary characteristics":{length:3},
-               "operational choices":{length:3},
-               "environmental history":{length:3}
-        },
-        building:{enclosure:{length:3},
-              subsystems:{length:3},
-              "fit & finish":{length:3}
-        },
-        environs:{personal:{length:3},
-              internal:{length:3},
-              external:{length:3},
+        code:{".zip":{},
+              ".tar.gz":{},
+              "github":{}
         }
       }
     }
 
 
     var sys = arbor.ParticleSystem()
-    sys.parameters({stiffness:600, repulsion:200, friction:1, gravity: true, dt:0.02, precision:0.6})
+    sys.parameters({stiffness:900, repulsion:2000, gravity:true, dt:0.015})
     sys.renderer = Renderer("#sitemap")
     sys.graft(theUI)
     
@@ -416,5 +390,4 @@
     nav.init()
   })
 })(this.jQuery)
-
 
